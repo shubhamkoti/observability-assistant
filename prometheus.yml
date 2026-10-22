@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'prometheus'  #to monitor prometheus itself
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'  # to monitor VM
+    static_configs:
+      - targets: ['172.17.0.1:9100'] #172.17.0.1 is commonly the IP address of the Docker host machine from the perspective of containers running on 
+                                     #Docker’s default bridge network. Then Container A → 172.17.0.x; Container B → 172.17.0.x
+
+
+# Change made by me for the 
+  - job_name: 'fastapi'   
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['backend:8000']  

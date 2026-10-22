@@ -1,0 +1,35 @@
+# Initial DB seed
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backend-seed
+  namespace: ecommerce
+spec:
+  backoffLimit: 0
+
+  template:
+    metadata:
+      labels:
+        app: backend-seed
+
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: seed
+          image: ecommerce-backend:latest
+          imagePullPolicy: IfNotPresent
+
+          command:
+            - python
+
+          args:
+            - -m
+            - scripts.seed
+
+          envFrom:
+            - configMapRef:
+                name: backend-config
+
+            - secretRef:
+                name: backend-secret

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: postgres-pvc
+  namespace: ecommerce
+
+spec:
+  accessModes:
+    - ReadWriteOnce #RWO
+
+  resources:
+    requests:
+      storage: 5Gi # atleast 5

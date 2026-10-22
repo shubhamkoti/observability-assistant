@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: ecommerce
+data:
+  RABBITMQ_HOST: rabbitmq-service
+  RABBITMQ_PORT: '5672'
+  RABBITMQ_QUEUE_NAME: email_jobs
+  EMAIL_FROM_ADDRESS: no-reply@marketgrid.local
+
+  MONGO_DB: ecommerce_logs
+
+  JWT_ALGORITHM: HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES: "60"
+
+  CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,https://ecommerce.ananthadev.online
+
+  LOW_STOCK_THRESHOLD_DEFAULT: "10"

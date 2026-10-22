@@ -1,0 +1,35 @@
+# Alembic migration job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backend-migration
+  namespace: ecommerce
+spec:
+  backoffLimit: 3
+
+  template:
+    metadata:
+      labels:
+        app: backend-migration
+
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+        - name: migration
+          image: ecommerce-backend:latest
+          imagePullPolicy: IfNotPresent
+
+          command:
+            - alembic
+
+          args:
+            - upgrade
+            - head
+
+          envFrom:
+            - configMapRef:
+                name: backend-config
+
+            - secretRef:
+                name: backend-secret
