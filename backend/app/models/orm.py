@@ -267,6 +267,8 @@ class Payment(Base):
     provider: Mapped[str] = mapped_column(String(40), nullable=False, default="simulated")
     status: Mapped[str] = mapped_column(String(40), default=PaymentStatus.pending.value)
     simulated_ref: Mapped[str | None] = mapped_column(String(120))
+    razorpay_order_id:Mapped[str | None] = mapped_column(String(100), unique=True, index = True) 
+    razorpay_payment_id:Mapped[str | None] = mapped_column(String(100), unique=True, index=True)
 
 
 class EmailQueueStatus(str, enum.Enum):

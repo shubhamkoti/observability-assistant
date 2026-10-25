@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -5,6 +6,7 @@ import { api } from '../api/client.js';
 
 export default function Orders() {
   const [rows, setRows] = useState([]);
+  const [payingOrderId, setPayingOrderId] = useState(null);
 
   const loadOrders = () => {
     api
@@ -17,14 +19,84 @@ export default function Orders() {
     loadOrders();
   }, []);
 
-  const simulatePayment = async (orderId) => {
+  const payWithRazorpay = async (orderId) => {
+    if (!window.Razorpay) {
+      toast.error('Razorpay Checkout did not load. Please refresh the page.');
+      return;
+    }
+
+    setPayingOrderId(orderId);
+
     try {
-      const res = await api.post(`/orders/${orderId}/simulate-payment`);
-      toast.success(`Payment ${res.data.status} for order #${orderId}`);
-      loadOrders();
+      // Create a Razorpay order through the backend
+      const res = await api.post(
+        `/orders/${orderId}/create-razorpay-order`
+      );
+
+      const data = res.data;
+
+      // Configure Razorpay Checkout
+      const options = {
+        key: data.key_id,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'MarketGrid',
+        description: `Payment for order #${orderId}`,
+        order_id: data.razorpay_order_id,
+
+        handler: async (response) => {
+          try {
+            // Verify the payment through the backend
+            await api.post(
+              `/orders/${orderId}/verify-razorpay-payment`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }
+            );
+
+            toast.success(`Payment successful for order #${orderId}`);
+            loadOrders();
+          } catch (err) {
+            const detail = err.response?.data?.detail;
+            toast.error(
+              typeof detail === 'string'
+                ? detail
+                : 'Payment verification failed'
+            );
+          } finally {
+            setPayingOrderId(null);
+          }
+        },
+
+        modal: {
+          ondismiss: () => setPayingOrderId(null),
+        },
+
+        theme: {
+          color: '#f97316',
+        },
+      };
+
+      const checkout = new window.Razorpay(options);
+
+      checkout.on('payment.failed', (response) => {
+        toast.error(
+          response.error?.description || 'Payment failed. Please try again.'
+        );
+        setPayingOrderId(null);
+      });
+
+      checkout.open();
     } catch (err) {
       const detail = err.response?.data?.detail;
-      toast.error(detail || 'Could not simulate payment');
+      toast.error(
+        typeof detail === 'string'
+          ? detail
+          : 'Could not start Razorpay payment'
+      );
+      setPayingOrderId(null);
     }
   };
 
@@ -49,19 +121,26 @@ export default function Orders() {
                 <td className="px-4 py-3 font-semibold">#{o.id}</td>
                 <td className="px-4 py-3">{o.status}</td>
                 <td className="px-4 py-3">{o.payment_status ?? 'Missing'}</td>
-                <td className="px-4 py-3">${Number(o.total).toFixed(2)}</td>
-                <td className="px-4 py-3 text-xs text-zinc-500">{new Date(o.created_at).toLocaleString()}</td>
+                <td className="px-4 py-3">₹{Number(o.total).toFixed(2)}</td>
+                <td className="px-4 py-3 text-xs text-zinc-500">
+                  {new Date(o.created_at).toLocaleString()}
+                </td>
                 <td className="px-4 py-3">
-                  {o.payment_status === 'Pending' ? (
+                  {['Pending', 'Failed'].includes(o.payment_status) ? (
                     <button
                       type="button"
-                      onClick={() => simulatePayment(o.id)}
-                      className="rounded-full bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-600"
+                      disabled={payingOrderId !== null}
+                      onClick={() => payWithRazorpay(o.id)}
+                      className="rounded-full bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Simulate Payment
+                      {payingOrderId === o.id
+                        ? 'Opening payment...'
+                        : 'Pay with Razorpay'}
                     </button>
                   ) : (
-                    <span className="text-xs text-zinc-400">{o.simulated_ref || 'Success'}</span>
+                    <span className="text-xs text-zinc-400">
+                      {o.payment_status === 'Success' ? 'Payment Successful' : o.payment_status}
+                    </span>
                   )}
                 </td>
               </tr>

@@ -97,6 +97,13 @@ services:
       EMAIL_FROM_ADDRESS: no-reply@marketgrid.local
       JWT_SECRET: ${JWT_SECRET}
       CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_CURRENCY: ${RAZORPAY_CURRENCY:-INR}
+      
+
+
+
     ports:
       - "8001:8000"
     depends_on:

@@ -6,6 +6,14 @@ from decimal import Decimal
 from pydantic import BaseModel, EmailStr, Field
 
 
+
+class RazorpayVerifyIn(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+
+
+
 class TokenOut(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -120,6 +128,8 @@ class PaymentOut(BaseModel):
     id: int
     status: str
     simulated_ref: str | None
+    razorpay_order_id:str | None = None
+    razorpay_payment_id :str | None = None
 
     model_config = {"from_attributes": True}
 

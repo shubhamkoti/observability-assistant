@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     rabbitmq_url: str = "amqp://guest:guest@localhost:5672/%2F"
     rabbitmq_queue_name: str = "email_jobs"
     email_from_address: str = "no-reply@marketgrid.local"
+    razorpay_key_id: str = ""
+    razorpay_key_secret: str = ""
+    razorpay_currency: str = "INR"
 
 
 settings = Settings()
