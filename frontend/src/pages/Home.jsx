@@ -119,7 +119,7 @@ function ProductCard({ product }) {
     >
       <div className="mb-3 aspect-[4/3] w-full rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-200" />
       <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900">{product.name}</h3>
-      <p className="mt-2 text-lg font-bold text-orange-600">${Number(product.price).toFixed(2)}</p>
+      <p className="mt-2 text-lg font-bold text-orange-600">₹{Number(product.price).toFixed(2)}</p>
       <p className="mt-1 text-xs text-zinc-400">Tap for details, reviews, and stock</p>
     </Link>
   );

@@ -51,7 +51,7 @@ export default function Checkout() {
       {cart && (
         <div className="rounded-3xl border border-zinc-200 bg-white p-4 text-sm">
           Lines:{' '}
-          <span className="font-semibold">{cart.lines.length}</span> · Subtotal $
+          <span className="font-semibold">{cart.lines.length}</span> · Subtotal ₹
           <span className="font-semibold">{Number(cart.subtotal).toFixed(2)}</span>
         </div>
       )}

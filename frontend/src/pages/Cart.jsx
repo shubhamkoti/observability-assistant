@@ -85,7 +85,7 @@ export default function Cart() {
               </button>
             </div>
             <div className="text-sm">
-              ${(Number(line.price_snapshot) * line.quantity).toFixed(2)}
+              ₹{(Number(line.price_snapshot) * line.quantity).toFixed(2)}
             </div>
             <Link to={`/products/${line.product_id}`} className="text-xs text-orange-700 hover:underline">
               Details
@@ -94,7 +94,7 @@ export default function Cart() {
         ))}
       </ul>
       <div className="flex justify-end text-lg font-bold text-zinc-900">
-        Subtotal: ${Number(cart.subtotal).toFixed(2)}
+        Subtotal: ₹{Number(cart.subtotal).toFixed(2)}
       </div>
     </div>
   );
