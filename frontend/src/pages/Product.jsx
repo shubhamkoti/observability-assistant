@@ -80,9 +80,9 @@ export default function Product() {
         <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
           <p className="text-xs uppercase tracking-wide text-orange-700">SKU {p.sku || '—'}</p>
           <h1 className="mt-2 text-3xl font-bold">{p.name}</h1>
-          <p className="mt-4 text-lg font-semibold text-orange-600">${Number(p.price).toFixed(2)}</p>
+          <p className="mt-4 text-lg font-semibold text-orange-600">₹{Number(p.price).toFixed(2)}</p>
           {p.compare_at_price && (
-            <p className="text-sm text-zinc-400 line-through">${Number(p.compare_at_price).toFixed(2)}</p>
+            <p className="text-sm text-zinc-400 line-through">₹{Number(p.compare_at_price).toFixed(2)}</p>
           )}
           <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-zinc-700">{p.description}</p>
           <p className="mt-3 text-sm text-zinc-500">
